@@ -1,0 +1,35 @@
+function onFormSubmit() {
+    
+    var form = FormApp.openById('=== ID ของฟอร์ม ลงเวลามา ====');
+    var fRes = form.getResponses();
+ 
+    var formResponse = fRes[fRes.length - 1];
+    var itemResponses = formResponse.getItemResponses();
+   
+    var date = Utilities.formatDate(new Date(), "GMT+7", "dd-MM-");  //ดึงวัน-เดือน จากระบบ
+    var thaiyear = Number(Utilities.formatDate(new Date(), "GMT+7", "yyyy"))+543; //ดึงปี ค.ศ.จากระบบ มาแปลงเป็น พ.ศ.
+    var time = Utilities.formatDate(new Date(), "GMT+7", "HH:mm");  //ดึงเฉพาะเวลา ชม:นาที
+ 
+   var msg = '\nลงชื่อมาปฏิบัติราชการ'
+     + ' \n'+ itemResponses[0].getResponse() +"\nวันที่ : "+ date+thaiyear+" เวลา : "+time+ '\n'
+     
+     // itemResponses[0].getResponse()---> เลข 0 หมายถึงข้อมูลที่กรอกลงไปในฟอร์มของเรารายการแรก ถ้ารายการต่อไปก็จะเป็น 1,2,3...ตามที่ให้กรอกในฟอร์มตามลำดับ
+  
+   sendLineNotify(msg); // เรียกใช้งานฟังชั้น sendLineNotify ให้ส่งข้อความแจ้งเตือน โดยใช้ข้อความจาก msg
+
+}
+ 
+function sendLineNotify(message) {
+
+    var token = "======Token line ของท่าน"; // ไลน์ครูโจ้ โรงเรียนวัดยายร่ม
+    
+    var options = {
+        "method": "post",
+        "payload": "message=" + message,
+        "headers": {
+            "Authorization": "Bearer " + token
+        }
+    };
+ 
+    UrlFetchApp.fetch("https://notify-api.line.me/api/notify", options);
+}
